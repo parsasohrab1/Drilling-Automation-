@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from dataset import generate_chunk, failure_types
+from Dataset import generate_chunk, failure_types
 
 @pytest.fixture
 def sample_df():
