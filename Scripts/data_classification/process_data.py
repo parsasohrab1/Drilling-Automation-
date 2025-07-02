@@ -11,8 +11,13 @@ non_operational_row_count = 0
 
 # Directories
 INPUT_DIR = "../output_fastparquet"
-OP_PATH = "output_operational.parquet"
-NON_OP_PATH = "output_non_operational.parquet"
+
+# Output directory inside script folder
+OUTPUT_DIR = "output_results"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+OP_PATH = os.path.join(OUTPUT_DIR, "output_operational.parquet")
+NON_OP_PATH = os.path.join(OUTPUT_DIR, "output_non_operational.parquet")
+
 
 
 def process_chunk(df):
