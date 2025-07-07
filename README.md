@@ -1,318 +1,336 @@
-# **سند نیازمندی‌های نرم‌افزار هوشمند اتوماسیون حفاری (SRS)**  
-**نسخه: 1.0**  
-**تاریخ: ۱۴۰۳/۰۴/۰۹**  
-**تهیه‌کننده: تیم توسعه هوش مصنوعی و اتوماسیون حفاری**  
+# **Smart Drilling Automation Software Requirements Document (SRS)**  
+**Version: 1.0**  
+**Date: 2024/06/29**  
+**Prepared by: AI and Drilling Automation Development Team**  
 
 ---
 
-## **۱. مقدمه**  
-این سند نیازمندی‌های نرم‌افزار **دوقلوی دیجیتال (Digital Twin) برای دکل حفاری خشکی با قدرت ۱۰۰۰ اسب‌بخار** را مشخص می‌کند. این سیستم شامل **نگهداری پیش‌گیرانه، بهینه‌سازی بلادرنگ، اعتبارسنجی داده‌ها، تطبیق داده‌ها و جمع‌آوری اطلاعات از LWD/MWD** است.  
+## **1. Introduction**  
+This document specifies the requirements for the **Digital Twin software for a 1000 HP onshore drilling rig**. The system includes **predictive maintenance, real-time optimization, data validation, data reconciliation, and LWD/MWD data collection**.
 
-### **۱.۱. هدف**  
-- ایجاد یک سیستم هوشمند برای **پایش، پیش‌بینی و بهینه‌سازی عملیات حفاری**.  
-- **کاهش زمان توقف** دکل با استفاده از نگهداری پیش‌گیرانه.  
-- **بهبود کارایی** حفاری با تصمیم‌گیری بلادرنگ.  
-- **یکپارچه‌سازی داده‌های سنسورها، PLC، DCS، SCADA، LWD و MWD**.  
+### **1.1. Purpose**  
+- Develop an intelligent system for **monitoring, predicting, and optimizing drilling operations**.  
+- **Reduce rig downtime** using predictive maintenance.  
+- **Improve drilling efficiency** through real-time decision-making.  
+- **Integrate sensor, PLC, DCS, SCADA, LWD, and MWD data**.
 
-### **۱.۲. محدوده**  
-- **پایش لحظه‌ای** پارامترهای حفاری.  
-- **پیش‌بینی خرابی‌ها** با استفاده از یادگیری ماشین.  
-- **بهینه‌سازی پارامترهای حفاری** (WOB، RPM، جریان گل حفاری و ...).  
-- **اتصال به سیستم‌های کنترلی (PLC/DCS/SCADA)**.  
-- **پشتیبانی از داده‌های LWD/MWD**.  
-
----
-
-## **۲. نیازمندی‌های کلی**  
-### **۲.۱. الزامات عملکردی**  
-| **شناسه** | **نیازمندی** | **توضیحات** |
-|-----------|--------------|-------------|
-| FR-001 | **پایش بلادرنگ داده‌های سنسورها** | جمع‌آوری داده‌ها با تأخیر کمتر از ۱ ثانیه |
-| FR-002 | **پیش‌بینی خرابی تجهیزات** | استفاده از الگوریتم‌های ML برای پیش‌بینی خرابی‌ها |
-| FR-003 | **بهینه‌سازی پارامترهای حفاری** | تنظیم خودکار WOB، RPM، فشار پمپ‌ها |
-| FR-004 | **اعتبارسنجی داده‌ها** | تشخیص نویز و داده‌های نامعتبر |
-| FR-005 | **اتصال به PLC/DCS/SCADA** | ارتباط با پروتکل‌های Modbus TCP/IP، OPC UA |
-| FR-006 | **پشتیبانی از LWD/MWD** | دریافت داده‌های گاما، مقاومت، ارتعاشات |
-| FR-007 | **داشبورد مدیریتی** | نمایش داده‌ها به صورت گرافیکی و هشدارهای لحظه‌ای |
-| FR-008 | **ذخیره‌سازی و تحلیل تاریخی داده‌ها** | استفاده از دیتابیس‌های Time-Series مانند InfluxDB |
-
-### **۲.۲. الزامات غیرعملکردی**  
-| **شناسه** | **نیازمندی** | **توضیحات** |
-|-----------|--------------|-------------|
-| NFR-001 | **کارایی** | پردازش داده‌ها با تأخیر کمتر از ۵۰۰ms |
-| NFR-002 | **قابلیت اطمینان** | uptime ≥ 99.9% |
-| NFR-003 | **امنیت** | احراز هویت کاربران و رمزنگاری داده‌ها |
-| NFR-004 | **مقیاس‌پذیری** | پشتیبانی از افزودن سنسورهای جدید بدون تغییر کد |
+### **1.2. Scope**  
+- **Real-time monitoring** of drilling parameters.  
+- **Failure prediction** using machine learning.  
+- **Optimization of drilling parameters** (WOB, RPM, mud flow, etc.).  
+- **Integration with control systems (PLC/DCS/SCADA)**.  
+- **Support for LWD/MWD data**.
 
 ---
 
-## **۳. سنسورهای مورد نیاز**  
-### **۳.۱. سنسورهای اصلی دکل حفاری**  
-| **نوع سنسور** | **پارامتر اندازه‌گیری** | **پروتکل ارتباطی** |
-|---------------|--------------------------|---------------------|
-| فشار سنج | فشار گل حفاری | 4-20mA / Modbus RTU |
-| جریان‌سنج | دبی گل حفاری | Modbus TCP |
-| لودسل | وزن روی مته (WOB) | CAN Bus |
-| انکودر | سرعت چرخش (RPM) | RS-485 |
-| شتاب‌سنج | ارتعاشات دکل | SPI/I2C |
-| دماسنج | دمای موتور و هیدرولیک | Modbus RTU |
-| سنسور گاز | تشخیص گازهای خطرناک | HART Protocol |
+## **2. General Requirements**
 
-### **۳.۲. سنسورهای LWD/MWD**  
-| **نوع سنسور** | **پارامتر اندازه‌گیری** | **پروتکل ارتباطی** |
-|---------------|--------------------------|---------------------|
-| گاما | تشعشعات گاما | WITS/WITSML |
-| مقاومت‌سنج | مقاومت الکتریکی سازند | WITSML |
-| ارتعاش‌سنج | لرزش مته | Mud Pulse Telemetry |
-| فشارسنج پایین‌چاهی | فشار پایین‌چاه | EM Telemetry |
+### **2.1. Functional Requirements**
 
----
+| **ID** | **Requirement** | **Description** |
+|--------|-----------------|-----------------|
+| FR-001 | **Real-time sensor data monitoring** | Data collection with < 1 sec delay |
+| FR-002 | **Equipment failure prediction** | Use ML algorithms for failure prediction |
+| FR-003 | **Drilling parameter optimization** | Auto-adjust WOB, RPM, pump pressure |
+| FR-004 | **Data validation** | Noise and invalid data detection |
+| FR-005 | **PLC/DCS/SCADA integration** | Modbus TCP/IP, OPC UA protocol support |
+| FR-006 | **LWD/MWD support** | Receive gamma, resistivity, vibration data |
+| FR-007 | **Management dashboard** | Graphical display with real-time alerts |
+| FR-008 | **Historical data storage and analysis** | Use time-series DBs like InfluxDB |
 
-## **۴. الگوریتم‌های مورد نیاز**  
-### **۴.۱. الگوریتم‌های یادگیری ماشین**  
-- **پیش‌بینی خرابی (Predictive Maintenance):**  
-  - Random Forest / LSTM برای تشخیص الگوی خرابی  
-- **بهینه‌سازی حفاری:**  
-  - Reinforcement Learning برای تنظیم پارامترها  
-- **تشخیص ناهنجاری (Anomaly Detection):**  
-  - Isolation Forest / Autoencoders  
+### **2.2. Non-Functional Requirements**
 
-### **۴.۲. پردازش بلادرنگ داده‌ها**  
-- **فیلتر کالمن** برای کاهش نویز  
-- **تبدیل فوریه سریع (FFT)** برای تحلیل ارتعاشات  
+| **ID** | **Requirement** | **Description** |
+|--------|-----------------|-----------------|
+| NFR-001 | **Performance** | Data processing with < 500ms latency |
+| NFR-002 | **Reliability** | Uptime ≥ 99.9% |
+| NFR-003 | **Security** | User authentication, data encryption |
+| NFR-004 | **Scalability** | Support adding new sensors without code changes |
 
 ---
 
-## **۵. ارتباط با سیستم‌های کنترلی (PLC/DCS/SCADA)**  
-### **۵.۱. روش‌های ارتباطی**  
-| **سیستم** | **پروتکل** | **نحوه اتصال** |
-|-----------|------------|----------------|
+## **3. Required Sensors**
+
+### **3.1. Rig Core Sensors**
+
+| **Sensor Type** | **Measured Parameter** | **Communication Protocol** |
+|-----------------|------------------------|-----------------------------|
+| Pressure Sensor | Mud pressure | 4-20mA / Modbus RTU |
+| Flow Meter | Mud flow rate | Modbus TCP |
+| Load Cell | Weight on bit (WOB) | CAN Bus |
+| Encoder | Rotational speed (RPM) | RS-485 |
+| Accelerometer | Rig vibrations | SPI/I2C |
+| Thermometer | Engine and hydraulic temp | Modbus RTU |
+| Gas Sensor | Hazardous gases detection | HART Protocol |
+
+### **3.2. LWD/MWD Sensors**
+
+| **Sensor Type** | **Measured Parameter** | **Communication Protocol** |
+|-----------------|------------------------|-----------------------------|
+| Gamma | Gamma radiation | WITS/WITSML |
+| Resistivity | Formation resistivity | WITSML |
+| Vibration | Bit vibration | Mud Pulse Telemetry |
+| Downhole Pressure | Downhole pressure | EM Telemetry |
+
+---
+
+## **4. Required Algorithms**
+
+### **4.1. Machine Learning Algorithms**
+
+- **Predictive Maintenance:**  
+  - Random Forest / LSTM for failure pattern detection.  
+- **Drilling Optimization:**  
+  - Reinforcement Learning for parameter adjustment.  
+- **Anomaly Detection:**  
+  - Isolation Forest / Autoencoders.
+
+### **4.2. Real-Time Data Processing**
+
+- **Kalman Filter** for noise reduction.  
+- **Fast Fourier Transform (FFT)** for vibration analysis.
+
+---
+
+## **5. Control Systems Integration (PLC/DCS/SCADA)**
+
+### **5.1. Communication Methods**
+
+| **System** | **Protocol** | **Connection Method** |
+|------------|--------------|-----------------------|
 | PLC | Modbus TCP/IP | Ethernet |
 | DCS | OPC UA | Secure WebSocket |
 | SCADA | MQTT | Broker-Based |
 | LWD/MWD | WITSML | REST API |
 
-### **۵.۲. نمونه کد ارتباط با PLC (Python)**  
+### **5.2. Example PLC Integration Code (Python)**
+
 ```python
 import pyModbusTCP
 
 client = pyModbusTCP.ModbusClient(host="PLC_IP", port=502)
-wob = client.read_holding_registers(0, 1)  # خواندن WOB
-client.write_single_register(1, 2500)      # تنظیم RPM
+wob = client.read_holding_registers(0, 1)  # Read WOB
+client.write_single_register(1, 2500)      # Set RPM
 ```
+## 6. Summary
+
+This document comprehensively covers the requirements for developing a **drilling digital twin**, including sensors, algorithms, PLC/DCS connectivity, and LWD/MWD data analysis.
+
+**Next Steps:**
+
+- Design the system architecture
+- Develop a prototype
+- Perform integration testing with the actual rig
 
 ---
 
-## **۶. جمع‌بندی**  
-این سند **نیازمندی‌های کامل** برای توسعه **دوقلوی دیجیتال حفاری** شامل **سنسورها، الگوریتم‌ها، ارتباط با PLC/DCS و تحلیل داده‌های LWD/MWD** را پوشش می‌دهد.  
+# **Digital Twin System Architecture for Drilling Automation**  
+**Version: 1.0**  
+**Date: 2024/06/29**  
 
-**گام بعدی:**  
-- طراحی معماری سیستم  
-- توسعه نمونه اولیه  
-- تست یکپارچه‌سازی با دکل واقعی  
+---
 
----  
-**پایان سند**
+## 1. Overall Architecture  
+The system is designed as a **layered architecture with microservices** to fulfill real-time monitoring, failure prediction, optimization, and integration with existing hardware.
 
-معماری سیستم دوقلوی دیجیتال برای اتوماسیون حفاری
-نسخه: 1.0
-تاریخ: ۱۴۰۳/۰۴/۰۹
+### 1.1. High-Level Architecture Diagram
 
-۱. نمای کلی معماری
-سیستم به صورت چندلایه (Layered Architecture) و مبتنی بر ریزسرویس‌ها (Microservices) طراحی می‌شود تا اهداف پایش بلادرنگ، پیش‌بینی خرابی، بهینه‌سازی و یکپارچه‌سازی با سخت‌افزارهای موجود محقق شود.
+```mermaid
+flowchart TB
 
-۱.۱. دیاگرام معماری کلی
-text
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                                    **User Layer**                            │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────────┐                  │
-│   │ Dashboard   │    │ Mobile App  │    │ Reporting Tools │                  │
-│   └─────────────┘    └─────────────┘    └─────────────────┘                  │
-│           ▲                   ▲                   ▲                          │
-│           │                   │                   │                          │
-└───────────┼───────────────────┼───────────────────┼──────────────────────────┘
-            │                   │                   │
-┌───────────▼───────────────────▼───────────────────▼──────────────────────────┐
-│                               **Application Layer**                          │
-│   ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐         │
-│   │ Predictive      │    │ Real-Time       │    │ Data Validation │         │
-│   │ Maintenance     │    │ Optimization    │    │ & Reconciliation│         │
-│   │ (ML Models)     │    │ (AI Algorithms) │    │                 │         │
-│   └─────────────────┘    └─────────────────┘    └─────────────────┘         │
-│           ▲                   ▲                   ▲                          │
-│           │                   │                   │                          │
-└───────────┼───────────────────┼───────────────────┼──────────────────────────┘
-            │                   │                   │
-┌───────────▼───────────────────▼───────────────────▼──────────────────────────┐
-│                               **Integration Layer**                          │
-│   ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐         │
-│   │ Data Ingestion  │    │ API Gateway     │    │ Stream          │         │
-│   │ (Sensors/PLC)   │    │ (REST/gRPC)     │    │ Processing      │         │
-│   └─────────────────┘    └─────────────────┘    └─────────────────┘         │
-│           ▲                   ▲                   ▲                          │
-│           │                   │                   │                          │
-└───────────┼───────────────────┼───────────────────┼──────────────────────────┘
-            │                   │                   │
-┌───────────▼───────────────────▼───────────────────▼──────────────────────────┐
-│                               **Data Layer**                                 │
-│   ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐         │
-│   │ Time-Series DB  │    │ Data Warehouse  │    │ Cache (Redis)   │         │
-│   │ (InfluxDB)      │    │ (PostgreSQL)    │    │                 │         │
-│   └─────────────────┘    └─────────────────┘    └─────────────────┘         │
-│           ▲                   ▲                   ▲                          │
-│           │                   │                   │                          │
-└───────────┼───────────────────┼───────────────────┼──────────────────────────┘
-            │                   │                   │
-┌───────────▼───────────────────▼───────────────────▼──────────────────────────┐
-│                               **Edge Layer**                                 │
-│   ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐         │
-│   │ PLC/DCS         │    │ LWD/MWD         │    │ IoT Gateways    │         │
-│   │ (Modbus/OPC UA) │    │ (WITSML)        │    │ (MQTT)          │         │
-│   └─────────────────┘    └─────────────────┘    └─────────────────┘         │
-└───────────────────────────────────────────────────────────────────────────────┘
-۲. جزئیات لایه‌ها
-۲.۱. لایه Edge (سخت‌افزار و ارتباطات)
-وظیفه: جمع‌آوری داده‌ها از سنسورها و سیستم‌های کنترل صنعتی.
-اجزا:
+%% User Layer
+subgraph User_Layer ["User Layer"]
+    UL1["Dashboard"]
+    UL2["Mobile App"]
+    UL3["Reporting Tools"]
+end
 
-PLC/DCS:
+%% Application Layer
+subgraph Application_Layer ["Application Layer"]
+    AL1["Predictive Maintenance<br/>(ML Models)"]
+    AL2["Real-Time Optimization<br/>(AI Algorithms)"]
+    AL3["Data Validation & Reconciliation"]
+end
 
-پروتکل: Modbus TCP/IP, OPC UA
+%% Integration Layer
+subgraph Integration_Layer ["Integration Layer"]
+    IL1["Data Ingestion<br/>(Sensors/PLC)"]
+    IL2["API Gateway<br/>(REST/gRPC)"]
+    IL3["Stream Processing"]
+end
 
-داده‌های خوانده‌شده: WOB, RPM, فشار پمپ, دما
+%% Data Layer
+subgraph Data_Layer ["Data Layer"]
+    DL1["Time-Series DB<br/>(InfluxDB)"]
+    DL2["Data Warehouse<br/>(PostgreSQL)"]
+    DL3["Cache<br/>(Redis)"]
+end
 
-LWD/MWD:
+%% Edge Layer
+subgraph Edge_Layer ["Edge Layer"]
+    EL1["PLC/DCS<br/>(Modbus/OPC UA)"]
+    EL2["LWD/MWD<br/>(WITSML)"]
+    EL3["IoT Gateways<br/>(MQTT)"]
+end
 
-پروتکل: WITSML (REST API یا WebSocket)
+%% Connections: Top-down per architecture
+UL1 --> AL1
+UL2 --> AL2
+UL3 --> AL3
 
-داده‌ها: گاما, مقاومت سازند, ارتعاشات مته
+AL1 --> IL1
+AL2 --> IL2
+AL3 --> IL3
 
-IoT Gateway:
+IL1 --> DL1
+IL2 --> DL2
+IL3 --> DL3
 
-نرم‌افزار: Node-RED یا Kafka Connect
-
-وظیفه: تبدیل پروتکل‌های صنعتی به MQTT/HTTP
-
-۲.۲. لایه داده (Data Layer)
-وظیفه: ذخیره‌سازی و مدیریت داده‌های بلادرنگ و تاریخی.
-اجزا:
-
-مولفه	فناوری	کاربرد
-Time-Series DB	InfluxDB	ذخیره‌سازی داده‌های سنسورها با فرکانس بالا
-Data Warehouse	PostgreSQL	ذخیره‌سازی داده‌های تحلیلی و متادیتا
-Cache	Redis	کاهش تأخیر در دسترسی به داده‌های پرتکرار
-۲.۳. لایه یکپارچه‌سازی (Integration Layer)
-وظیفه: پردازش جریان داده و ارتباط بین لایه‌ها.
-اجزا:
-
-Data Ingestion:
-
-Apache Kafka یا MQTT Broker برای جمع‌آوری داده‌ها از سنسورها.
-
-Stream Processing:
-
-Apache Flink یا Spark Streaming برای پردازش بلادرنگ.
-
-API Gateway:
-
-Kong یا Nginx برای مدیریت APIهای داخلی/خارجی.
-
-۲.۴. لایه کاربردی (Application Layer)
-وظیفه: اجرای هوش مصنوعی و منطق کسب‌وکار.
-سرویس‌ها:
-
-سرویس	فناوری	توضیحات
-Predictive Maintenance	Python (TensorFlow/PyTorch)	مدل‌های LSTM برای پیش‌بینی خرابی
-Real-Time Optimization	Reinforcement Learning	تنظیم خودکار پارامترهای حفاری
-Data Validation	Rule Engine (Drools)	تشخیص داده‌های نامعتبر و نویز
-۲.۵. لایه کاربری (User Layer)
-وظیفه: نمایش اطلاعات و تعامل با اپراتورها.
-اجزا:
-
-Dashboard:
-
-Grafana (برای پایش بلادرنگ) + React.js (برای رابط سفارشی).
-
-Mobile App:
-
-Flutter (برای هشدارهای فوری و گزارش‌دهی).
-
-Reporting:
-
-Power BI (برای تحلیل تاریخی).
-
-۳. جریان داده‌ها (Data Flow)
-۱. جمع‌آوری داده:
-
-سنسورها → PLC → MQTT/Kafka → Stream Processing.
-۲. پردازش بلادرنگ:
-
-فیلتر نویز → تشخیص ناهنجاری → ذخیره در InfluxDB.
-۳. تحلیل و تصمیم‌گیری:
-
-مدل‌های ML → پیش‌بینی خرابی → ارسال فرمان به PLC.
-۴. نمایش و هشدار:
-
-Grafana Dashboard → اعلان‌های Telegram/Email.
-
-۴. ملاحظات امنیتی
-رمزنگاری داده‌ها: استفاده از TLS/SSL برای ارتباطات.
-
-احراز هویت: OAuth 2.0 برای دسترسی به APIها.
-
-امنیت سخت‌افزار: فایروال صنعتی بین PLC و شبکه IT.
-
-۵. ابزارهای پیشنهادی برای توسعه
-هدف	فناوری/ابزار
-توسعه Backend	Python (FastAPI)
-پردازش جریان داده	Apache Flink
-مدیریت کانتینرها	Docker + Kubernetes
-مانیتورینگ سیستم	Prometheus + Grafana
-CI/CD	GitLab CI
-۶. جمع‌بندی
-این معماری مقیاس‌پذیر، بلادرنگ و ایمن برای دوقلوی دیجیتال حفاری طراحی شده است. گام بعدی:
-
-پیاده‌سازی نمونه اولیه با استفاده از Docker و Kafka.
-
-تست یکپارچه‌سازی با PLC شبیه‌سازی‌شده.
+DL1 --> EL1
+DL2 --> EL2
+DL3 --> EL3
+```
 
 
+---
 
-# **اجرای نمونه اولیه سیستم دوقلوی دیجیتال حفاری**  
-**گام بعدی: پیاده‌سازی اولیه و تست یکپارچه‌سازی**  
+## 2. Layer Details
 
-## **۱. راه‌اندازی محیط توسعه**  
-### **۱.۱. پیش‌نیازهای سخت‌افزاری/نرم‌افزاری**  
-- **سرور:**  
-  - حداقل مشخصات: **۴ هسته CPU, 16GB RAM, 100GB SSD** (یا استفاده از Cloud مانند AWS/GCP).  
-  - سیستم عامل: **Ubuntu 22.04 LTS**.  
-- **نرم‌افزارهای ضروری:**  
+### 2.1. Edge Layer (Hardware and Communication)  
+**Role:** Collect data from sensors and industrial control systems.  
+**Components:**  
+
+- **PLC/DCS:**  
+  - Protocols: Modbus TCP/IP, OPC UA  
+  - Data read: WOB, RPM, pump pressure, temperature  
+
+- **LWD/MWD:**  
+  - Protocol: WITSML (REST API or WebSocket)  
+  - Data: Gamma, formation resistivity, bit vibration  
+
+- **IoT Gateway:**  
+  - Software: Node-RED or Kafka Connect  
+  - Role: Protocol translation to MQTT/HTTP  
+
+### 2.2. Data Layer  
+**Role:** Store and manage real-time and historical data.  
+
+| Component        | Technology      | Purpose                             |
+|------------------|-----------------|-----------------------------------|
+| Time-Series DB    | InfluxDB        | Store high-frequency sensor data  |
+| Data Warehouse   | PostgreSQL      | Store analytics data and metadata |
+| Cache            | Redis           | Reduce latency on frequent access |
+
+### 2.3. Integration Layer  
+**Role:** Stream data processing and cross-layer communication.  
+
+| Component       | Technology           | Purpose                              |
+|-----------------|----------------------|------------------------------------|
+| Data Ingestion  | Apache Kafka / MQTT Broker | Collect sensor data             |
+| Stream Processing | Apache Flink / Spark Streaming | Real-time processing        |
+| API Gateway    | Kong / Nginx          | Manage internal/external APIs       |
+
+### 2.4. Application Layer  
+**Role:** Run AI models and business logic.  
+
+| Service              | Technology                  | Description                          |
+|----------------------|-----------------------------|------------------------------------|
+| Predictive Maintenance | Python (TensorFlow/PyTorch) | LSTM models for failure prediction |
+| Real-Time Optimization | Reinforcement Learning      | Auto-tune drilling parameters      |
+| Data Validation       | Rule Engine (Drools)         | Detect invalid/noisy data           |
+
+### 2.5. User Layer  
+**Role:** Present information and interact with operators.  
+
+| Component     | Technology             | Purpose                          |
+|---------------|-----------------------|--------------------------------|
+| Dashboard     | Grafana + React.js    | Real-time monitoring UI         |
+| Mobile App   | Flutter               | Instant alerts and reporting    |
+| Reporting    | Power BI              | Historical data analysis        |
+
+---
+
+## 3. Data Flow  
+1. **Data Collection:**  
+   Sensors → PLC → MQTT/Kafka → Stream Processing.  
+
+2. **Real-Time Processing:**  
+   Noise filtering → Anomaly detection → Store in InfluxDB.  
+
+3. **Analysis & Decision Making:**  
+   ML models → Failure prediction → Commands sent to PLC.  
+
+4. **Display & Alerts:**  
+   Grafana dashboard → Notifications via Telegram/Email.  
+
+---
+
+## 4. Security Considerations  
+- **Data Encryption:** Use TLS/SSL for all communications.  
+- **Authentication:** OAuth 2.0 for API access control.  
+- **Hardware Security:** Industrial firewall between PLC and IT network.  
+
+---
+
+## 5. Recommended Development Tools  
+
+| Goal                  | Technology / Tools        |
+|-----------------------|--------------------------|
+| Backend Development   | Python (FastAPI)          |
+| Stream Processing     | Apache Flink              |
+| Container Management  | Docker + Kubernetes       |
+| Monitoring            | Prometheus + Grafana      |
+| CI/CD                 | GitLab CI                 |
+
+---
+
+## 6. Summary  
+This architecture is designed to be scalable, real-time, and secure for the drilling digital twin system.  
+
+**Next Steps:**  
+- Prototype implementation using Docker and Kafka.  
+- Integration testing with simulated PLC.  
+
+---
+
+# **Prototype Implementation of Drilling Digital Twin System**  
+**Next Step: Initial Implementation and Integration Testing**  
+
+---
+
+## 1. Setting Up the Development Environment
+
+### 1.1. Hardware/Software Requirements  
+- **Server:**  
+  - Minimum specs: **4 CPU cores, 16GB RAM, 100GB SSD** (or cloud like AWS/GCP).  
+  - OS: **Ubuntu 22.04 LTS**.  
+- **Required Software:**  
   - Docker + Docker-Compose  
   - Python 3.10+  
   - Apache Kafka  
   - InfluxDB 2.0  
 
-### **۱.۲. نصب ابزارها**  
+### 1.2. Installing Tools  
+
 ```bash
-# نصب Docker و Docker-Compose
+# Install Docker and Docker-Compose
 sudo apt update && sudo apt install docker.io docker-compose -y
 sudo systemctl enable docker
 
-# نصب Python و کتابخانه‌های ضروری
+# Install Python and necessary libraries
 sudo apt install python3-pip
 pip3 install fastapi kafka-python influxdb-client pymodbus torch scikit-learn
 
-# دانلود و اجرای Kafka + InfluxDB با Docker
+# Clone and run Kafka + InfluxDB with Docker
 git clone https://github.com/digital-twin-oil/docker-compose.git
 cd docker-compose
 docker-compose up -d
 ```
 
----
+## 2. Implementing Key Services
 
-## **۲. پیاده‌سازی سرویس‌های کلیدی**  
-### **۲.۱. Data Ingestion (جمع‌آوری داده از سنسورها و PLC)**  
-**کد Python برای ارتباط با PLC (شبیه‌سازی شده):**  
+### 2.1. Data Ingestion (Collecting Data from Sensors and PLC)
+
 ```python
 from pyModbusTCP.client import ModbusClient
 import time
@@ -320,8 +338,8 @@ import time
 def read_plc_data():
     plc = ModbusClient(host="192.168.1.100", port=502, auto_open=True)
     while True:
-        wob = plc.read_holding_registers(0, 1)[0]  # خواندن WOB
-        rpm = plc.read_holding_registers(1, 1)[0]  # خواندن RPM
+        wob = plc.read_holding_registers(0, 1)[0]
+        rpm = plc.read_holding_registers(1, 1)[0]
         print(f"WOB: {wob} kg, RPM: {rpm}")
         time.sleep(1)
 
@@ -329,14 +347,18 @@ if __name__ == "__main__":
     read_plc_data()
 ```
 
-### **۲.۲. Stream Processing با Apache Kafka**  
-**Producer (ارسال داده به Kafka):**  
+### 2.2. Stream Processing with Apache Kafka
+
+**Producer:**
+
 ```python
 from kafka import KafkaProducer
 import json
 
-producer = KafkaProducer(bootstrap_servers='localhost:9092',
-                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+producer = KafkaProducer(
+    bootstrap_servers='localhost:9092',
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
 
 def send_sensor_data():
     data = {"sensor_id": "pressure_1", "value": 250, "unit": "psi"}
@@ -345,9 +367,12 @@ def send_sensor_data():
 send_sensor_data()
 ```
 
-**Consumer (پردازش داده‌ها):**  
+**Consumer:**
+
 ```python
 from kafka import KafkaConsumer
+import json
+
 consumer = KafkaConsumer('sensor-data', bootstrap_servers='localhost:9092')
 
 for msg in consumer:
@@ -357,10 +382,13 @@ for msg in consumer:
 
 ---
 
-## **۳. راه‌اندازی دیتابیس و ذخیره‌سازی داده‌ها**  
-### **۳.۱. پیکربندی InfluxDB**  
+## 3. Setting Up Database and Data Storage
+
+### 3.1. Configuring InfluxDB
+
 ```python
 from influxdb_client import InfluxDBClient
+from datetime import datetime
 
 client = InfluxDBClient(url="http://localhost:8086", token="my-token", org="my-org")
 write_api = client.write_api()
@@ -377,8 +405,10 @@ write_api.write(bucket="drilling-data", record=data)
 
 ---
 
-## **۴. پیاده‌سازی مدل‌های هوش مصنوعی**  
-### **۴.۱. مدل پیش‌بینی خرابی (LSTM)**  
+## 4. Implementing AI Models
+
+### 4.1. Failure Prediction Model (LSTM)
+
 ```python
 import torch
 import torch.nn as nn
@@ -387,24 +417,24 @@ class LSTMModel(nn.Module):
     def __init__(self, input_size=5, hidden_size=64):
         super().__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True)
-        self.fc = nn.Linear(hidden_size, 1)  # خروجی: احتمال خرابی
+        self.fc = nn.Linear(hidden_size, 1)
 
     def forward(self, x):
         out, _ = self.lstm(x)
         return torch.sigmoid(self.fc(out[:, -1]))
 
-# آموزش مدل (مثال ساده)
 model = LSTMModel()
 criterion = nn.BCELoss()
 optimizer = torch.optim.Adam(model.parameters())
 ```
 
-### **۴.۲. بهینه‌سازی بلادرنگ (Reinforcement Learning)**  
+### 4.2. Real-Time Optimization (Reinforcement Learning)
+
 ```python
 import gym
 from stable_baselines3 import PPO
 
-env = gym.make("DrillingEnv-v0")  # محیط شبیه‌سازی حفاری
+env = gym.make("DrillingEnv-v0")
 model = PPO("MlpPolicy", env, verbose=1)
 model.learn(total_timesteps=10000)
 model.save("drilling_optimizer")
@@ -412,53 +442,58 @@ model.save("drilling_optimizer")
 
 ---
 
-## **۵. تست یکپارچه‌سازی با PLC شبیه‌سازی‌شده**  
-### **۵.۱. استفاده از PLC Simulator (مانند ModbusPal)**  
-- **دانلود و اجرای ModbusPal:**  
-  ```bash
-  java -jar modbuspal.jar
-  ```
-- **تنظیم Registers:**  
-  - آدرس 0: WOB (مقدار اولیه: 1500)  
-  - آدرس 1: RPM (مقدار اولیه: 80)  
+## 5. Integration Testing with Simulated PLC
 
-### **۵.۲. اجرای تست End-to-End**  
-۱. **ارسال داده از PLC به Kafka.**  
-۲. **پردازش داده در Flink/Spark.**  
-۳. **ذخیره‌سازی در InfluxDB.**  
-۴. **نمایش داده در Grafana.**  
+### 5.1. Using a PLC Simulator (ModbusPal)
+
+```bash
+java -jar modbuspal.jar
+```
+
+**Registers Configuration:**
+- Register address 0: WOB (1500)
+- Register address 1: RPM (80)
+
+### 5.2. End-to-End Test
+
+1. Send data from PLC to Kafka
+2. Process data with Flink/Spark
+3. Store in InfluxDB
+4. Visualize in Grafana
 
 ---
 
-## **۶. مانیتورینگ و خطایابی**  
-- **Grafana Dashboard:**  
-  - اتصال به InfluxDB و نمایش متریک‌های بلادرنگ.  
-- **Prometheus:**  
-  - مانیتورینگ سلامت سرویس‌ها (CPU, Memory, Latency).  
+## 6. Monitoring and Debugging
+
+- **Grafana Dashboard:** Connect to InfluxDB for real-time monitoring.
+- **Prometheus:** Monitor CPU, memory, latency.
 
 ```yaml
-# docker-compose.yml (افزودن Grafana + Prometheus)
 services:
   grafana:
     image: grafana/grafana
-    ports: ["3000:3000"]
+    ports:
+      - "3000:3000"
   prometheus:
     image: prom/prometheus
-    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml"]
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
 ```
 
 ---
 
-## **۷. جمع‌بندی و گام‌های بعدی**  
-- **نتایج نمونه اولیه:**  
-  - تأیید ارتباط با PLC و سنسورهای شبیه‌سازی‌شده.  
-  - عملکرد مدل‌های ML در داده‌های آزمایشی.  
-- **گام‌های بعدی:**  
-  - **تست روی دکل واقعی** با همکاری اپراتورهای حفاری.  
-  - **افزودن سنسورهای LWD/MWD** واقعی.  
-  - **بهینه‌سازی مدل‌های AI** با داده‌های واقعی.  
+## 7. Summary and Next Steps
 
-**پایان فاز پیاده‌سازی اولیه** 🚀  
+**Prototype Results:**
+- Verified communication with simulated PLC and sensors.
+- Tested ML models on sample data.
+
+**Next:**
+- Test on a real rig.
+- Add real LWD/MWD sensors.
+- Optimize AI models with real data.
+
+**End of Initial Deployment Phase 🚀**
 
 ```mermaid
 graph TD
