@@ -59,7 +59,6 @@ def generate_chunk(device_id, start_idx, chunk_size, total_records):
 
     df = pd.DataFrame(data)
 
-    # افزودن داده‌های گمشده
     n_cells = df.size
     n_missing = int(n_cells * 0.05)
     for _ in range(n_missing):
@@ -69,7 +68,6 @@ def generate_chunk(device_id, start_idx, chunk_size, total_records):
             continue
         df.iat[i, j] = np.nan
 
-    # افزودن نویز به داده‌های عددی
     n_noisy = int(n_cells * 0.03)
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     for _ in range(n_noisy):
@@ -95,15 +93,13 @@ def generate_device_data(device_id):
         chunk_df = generate_chunk(device_id, start_idx, chunk_size, total_records)
 
         if chunk_idx == 0:
-            # فایل جدید بساز و بنویس
             write(filepath, chunk_df, compression='snappy')
         else:
-            # چانک‌ها را append کن
             write(filepath, chunk_df, compression='snappy', append=True)
 
-        print(f"دستگاه {device_id} - چانک {chunk_idx} ذخیره شد.")
+        print(f"Device {device_id} - Chunk {chunk_idx} saved.")
 
 for device_id in range(1, num_devices + 1):
     generate_device_data(device_id)
 
-print("تولید داده‌ها با fastparquet به پایان رسید.")
+print("Data generation with fastparquet completed.")
