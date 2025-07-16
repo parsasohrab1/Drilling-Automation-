@@ -5,10 +5,10 @@ import random
 import os
 from fastparquet import write
 
-num_devices = 10
-duration_days = 6 * 30
+num_devices = 1      # فقط 1 دستگاه
+duration_days = 1    # فقط 1 روز داده (به جای 6 ماه)
+chunk_size = 100_000 # کاهش حجم چانک
 freq_seconds = 1
-chunk_size = 10_000_000
 start_time = datetime(2025, 1, 1, 0, 0, 0)
 records_per_device = int((24 * 60 * 60 / freq_seconds) * duration_days)
 
