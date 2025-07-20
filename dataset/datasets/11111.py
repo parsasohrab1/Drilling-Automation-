@@ -26,6 +26,8 @@ def handle_missing_values(df):
     for col in categorical_cols:
         if df[col].isnull().sum() > 0:
             df[col].fillna(df[col].mode()[0], inplace=True)
+    # just a new comment to trigger a new PR
+
 
     print("Missing values after imputation:\n", df.isnull().sum())
     return df
