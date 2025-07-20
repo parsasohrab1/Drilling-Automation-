@@ -1,0 +1,7 @@
+for running:
+docker-compose up --build
+
+-------------------------------
+
+for stopping:
+docker-compose down

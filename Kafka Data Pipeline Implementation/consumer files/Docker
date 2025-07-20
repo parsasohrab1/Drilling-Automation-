@@ -1,0 +1,10 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY consumer/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY consumer/sensor_consumer.py .
+
+CMD ["python", "sensor_consumer.py"]
